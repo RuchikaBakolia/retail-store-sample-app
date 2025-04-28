@@ -146,6 +146,15 @@ module "eks_blueprints_addons" {
   oidc_provider_arn = module.eks_cluster.oidc_provider_arn
 
   enable_aws_load_balancer_controller = true
+  
+  # Turn off mutation webhook for services to avoid ordering issue
+  aws_load_balancer_controller = {
+    set = [{
+      name  = "enableServiceMutatorWebhook"
+      value = "false"
+    }]
+  }
+
   enable_cert_manager                 = true
 }
 
