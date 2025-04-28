@@ -36,7 +36,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sethvargo/go-envconfig/pkg/envconfig"
+	"github.com/newrelic/go-agent/v3/newrelic"
 	ginprometheus "github.com/zsais/go-gin-prometheus"
+	nrgin "github.com/newrelic/go-agent/v3/integrations/nrgin"
 
 	"go.opentelemetry.io/contrib/detectors/aws/ec2"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
@@ -80,6 +82,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	r := gin.Default()
+	// Add the nrgin middleware before other middlewares or routes:
+	r.Use(nrgin.Middleware(app))
 
 	r := gin.New()
 	r.Use(gin.LoggerWithConfig(gin.LoggerConfig{
@@ -152,6 +158,12 @@ func main() {
 	}
 
 	log.Println("Server exiting")
+
+	app, err := newrelic.NewApplication(
+	newrelic.ConfigAppName("catalog"),
+	newrelic.ConfigLicense("YOUR_NEW_RELIC_LICENSE_KEY"),
+	newrelic.ConfigAppLogForwardingEnabled(true),
+	)
 }
 
 func initTracer(ctx context.Context) (*sdktrace.TracerProvider, error) {
