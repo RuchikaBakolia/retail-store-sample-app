@@ -1,4 +1,4 @@
-name: Change Tracking Marker
+name: GitHub Actions Tracker
 on:
   workflow_dispatch:
   release:
@@ -12,7 +12,7 @@ jobs:
       # This step builds a var with the release tag value to use later
       - name: Set Release Version from Tag
         run: echo "RELEASE_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
-      # This step creates a new Change Tracking Marker for App123
+      # This step creates a new GitHub Actions Tracker for App123
       - name: Carts
         uses: newrelic/deployment-marker-action@v2.3.0
         with:
