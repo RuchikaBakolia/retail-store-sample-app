@@ -18,5 +18,5 @@ jobs:
         with:
           apiKey: ${{ secrets.NEW_RELIC_API_KEY }}
           guid: ${{ secrets.NEW_RELIC_DEPLOYMENT_ENTITY_GUID_CARTS }}
-          version: "${{ env.RELEASE_VERSION }}"
+          version: 1
           user: "${{ github.actor }}"
