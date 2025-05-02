@@ -18,7 +18,12 @@ jobs:
         uses: actions/checkout@v3
       # This step builds a var with the release tag value to use later
       - name: Set Release Version from Tag
-        run: echo "RELEASE_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "RELEASE_VERSION=${{ github.event.inputs.tag_name }}" >> $GITHUB_ENV
+          else
+            echo "RELEASE_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+          fi
       # This step creates a new GitHub Actions Tracker for App123
       - name: Carts
         uses: newrelic/deployment-marker-action@v2.3.0
