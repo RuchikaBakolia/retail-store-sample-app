@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: "GitHub Actions Tracker"
+        description: "Tag name for the release"
         required: true
   release:
     types: [published]
@@ -13,17 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     name: New Relic
     steps:
+      # Step to check out the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
       # This step builds a var with the release tag value to use later
       - name: Set Release Version from Tag
-        run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "RELEASE_VERSION=${{ github.event.inputs.tag_name }}" >> $GITHUB_ENV
-          elif startsWith("${{ github.ref }}", "refs/tags/"); then
-            echo "RELEASE_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
-          else
-            echo "Error: No valid tag found."
-            exit 1
-          fi
+        run: echo "RELEASE_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
       # This step creates a new GitHub Actions Tracker for App123
       - name: Carts
         uses: newrelic/deployment-marker-action@v2.3.0
