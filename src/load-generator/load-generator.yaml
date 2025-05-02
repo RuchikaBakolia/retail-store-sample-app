@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: load-generator
+spec:
+  replicas: 1 # Number of load generator Pods
+  selector:
+    matchLabels:
+      app: load-generator
+  template:
+    metadata:
+      labels:
+        app: load-generator
+    spec:
+      containers:
+        - name: artillery
+          image: artilleryio/artillery:2.0.0-31
+          args:
+            - "run"
+            - "-t"
+            - "http://k8s-ui-ui-0cba5ad9e9-b5b757cb5d44a266.elb.us-east-2.amazonaws.com"
+            - "/scripts/scenario.yml"
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+      initContainers:
+        - name: setup
+          image: public.ecr.aws/aws-containers/retail-store-sample-utils:load-gen.0.3.0
+          command:
+            - bash
+          args:
+            - -c
+            - "cp /artillery/* /scripts"
+          volumeMounts:
+            - name: scripts
+              mountPath: "/scripts"
+      volumes:
+        - name: scripts
+          emptyDir: {}
