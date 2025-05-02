@@ -1,0 +1,34 @@
+name: GitHub Actions Tracker
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag name for the release"
+        required: true
+  release:
+    types: [published]
+
+jobs:
+  newrelic:
+    runs-on: ubuntu-latest
+    name: New Relic
+    steps:
+      # Step to check out the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      # This step builds a var with the release tag value to use later
+      - name: Set Release Version from Tag
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "RELEASE_VERSION=${{ github.event.inputs.tag_name }}" >> $GITHUB_ENV
+          else
+            echo "RELEASE_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+          fi
+      # This step creates a new GitHub Actions Tracker for App123
+      - name: Carts
+        uses: newrelic/deployment-marker-action@v2.3.0
+        with:
+          apiKey: ${{ secrets.NEW_RELIC_API_KEY }}
+          guid: ${{ secrets.NEW_RELIC_DEPLOYMENT_ENTITY_GUID_CARTS }}
+          version: 1
+          user: "${{ github.actor }}"
