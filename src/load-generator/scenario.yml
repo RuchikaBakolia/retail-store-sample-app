@@ -1,8 +1,18 @@
 config:
-  target: "http://localhost:8888"
+  target: "http://k8s-ui-ui-0cba5ad9e9-b5b757cb5d44a266.elb.us-east-2.amazonaws.com"
   phases:
-    - duration: 0
-      arrivalRate: 1
+    - duration: 600 # Run for 60 seconds
+      arrivalRate: 1000 # Start with 50 requests per second
+    - duration: 90 # Run for another 120 seconds
+      arrivalRate: 1000 # Increase to 200 requests per second
+    - duration: 120 # Run for another 180 seconds
+      arrivalRate: 1000 # Increase to 500 requests per second
+    - duration: 150 # Run for another 180 seconds
+      arrivalRate: 1000 # Increase to 500 requests per second
+    - duration: 180 # Run for another 180 seconds
+      arrivalRate: 1000 # Increase to 500 requests per second
+    - duration: 240 # Run for another 180 seconds
+      arrivalRate: 1000 # Increase to 500 requests per second
   processor: "./helpers.js"
 
 scenarios:
@@ -33,7 +43,7 @@ scenarios:
             lastName: Doe
             email: jdoe789@example.com
             address1: 123 Main Street
-            address2: 
+            address2:
             city: New York
             state: NY
             zip: 12345
